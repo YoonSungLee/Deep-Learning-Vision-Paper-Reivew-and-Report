@@ -62,4 +62,24 @@ loss function의 종류는 굉장히 다양하며, biased data나 sparse segment
 **Wong et al. proposes to make exponential and logarithmic transforms to both Dice loss an cross entropy loss so as to incorporate benefits of finer decision boundaries and accurate data distribution.**
 
 ## L. Distance map derived loss penalty term
-(..making..)
+(...skip...)
+
+## M. Hausdorff Distance Loss
+(...skip...)
+
+## N. Correlation Maximized Structural Similarity Loss
+(...skip...)
+
+## O. Log-Cosh Dice Loss
+**Log-Cosh approach has been widely used in regression based problem for smoothing the curve.**
+<img src='https://i.imgur.com/46AXPBM.png' width='100%'>
+
+## Summary
+<img src='https://i.imgur.com/AIYQjXu.png' width='100%'>
+
+# 3. Experiments
+<img src='https://i.imgur.com/1QzyP02.png' width='100%'>
+해당 논문에서는 Evaluation Metrics로 **Dice Coefficient**, **Sensitivity**, **Specificity**를 모두 사용하였다. 일반적으로 모델의 성능 평가지표로써 Dice Coefficient만 사용하는 것으로 알고 있었으나, task에 맞게 선택하는 자세가 필요하다. 만약 이러한 판단이 어렵다면, 위에 제시된 3가지에 대하여 모두 비교하는 방식으로 진행할 수 있다.
+
+# 4. Conclusion
+(...skip...)
