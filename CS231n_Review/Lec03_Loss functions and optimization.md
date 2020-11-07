@@ -33,7 +33,7 @@ def L_i_vectorized(x, y, W):
 
 
 
-# 2. 규제(Regularization)
+### 2. 규제(Regularization)
 
 <img src='Image/cs231n010.png' width='100%'>
 
@@ -46,4 +46,56 @@ def L_i_vectorized(x, y, W):
 * L1: 분류기의 복잡도를가중치 W의 0의 개수에 따라 측정한다.
 * L2: 분류기의 복잡도를 상대적으로 더 coarse한지(값이 매끄러운지)를 통해 측정한다.
 
-39:21~
+### 3. Softmax Classifier(Multinomial Logistic Regression)
+
+<img src='Image/cs231n012.png' width='100%'>
+
+Q) At initialization W is small so all s = 0. What is the loss?<br>
+
+A) -log(1/C) = log(C)가 되어야 한다. 마찬가지로 '디버깅 전략'으로 유용하다.<br>
+
+*Note*<br>
+
+SVM의 경우에는 일정 선(margins)을 넘기만 하면 더 이상 성능 개선에 신경쓰지 않는다. 반면 softmax는 정답 클래스는 무한대로, 그 외의 클래스는 음의 무한대로 보내려 하면서 더 좋게 성능을 높이려 할 것이다.<br>
+
+# 2. 최적화(Optimization)
+
+### 1. Random Search
+
+```python
+# assume X_train is the data where each column is an example(e.g. 3073 x 50,000)
+# assume Y_train are the labels(e.g. ID array of 50,000)
+# assume the function L evaluates the loss function
+
+bestloss = float('inf')	# Python assigns the highest possible float value
+for num in range(1000):
+    W = np.random.randn(10, 3073) * 0.0001	# generate random parameters
+    loss = L(X_train, Y_train, W)	# get the loss over the entire training set
+    if loss < bestloss:	# keep track of the best solution
+        bestloss = loss
+        bestW = W
+   	print('in attempt %d the loss was %f, best %f'%(num, loss, bestloss))
+```
+
+### 2. Gradient Descent
+
+```python
+# Vanilla Gradient Descent
+
+while True:
+    weights_grad = evaluate_gradient(loss_fun, data, weights)
+    weights += - step_size * weights_grad	# perform parameter update
+```
+
+### 3. Stochastic Gradient Descent(SGD)
+
+<img src='Image/cs231n013.png' width='100%'>
+
+```python
+# Vanilla Minibatch Gradient Descent
+
+while True:
+    data_batch = sample_training_data(data, 256)	# sample 256 examples
+    weights_grad = evaluate_gradient(loss_fun, data_batch, weights)
+    weights += - step_size * weights_grad	# perform parameter update
+```
