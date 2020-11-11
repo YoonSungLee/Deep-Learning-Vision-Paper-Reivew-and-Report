@@ -35,14 +35,17 @@ U-Net의 성능을 향상시키기 위해 수행되었던 연구 중에 하나�
 
 ## 2.2 Objective loss functions
 <img src='https://i.imgur.com/VlfT2gL.png' width='100%'>
+
 *The Dice similarity coefficient (DSC) and Jaccard similarity coefficient (JSC) are two well known measures in segmentation and can be used as objective loss functions in training.*<br>
 <br>
 
 <img src='https://i.imgur.com/liUlnPJ.png' width='100%'>
+
 *The Tversky loss [19] introduces weighting into the loss function for highly imbalanced data, where we want to segment small objects. where α and β control the magnitude of penalties for FPs and FNs, respectively. In our study we used α = 0.3 and β = 0.7.*<br>
 <br>
 
 <img src='https://i.imgur.com/ESsaOnd.png' width='100%'>
+
 *BCE was calculated separately for each class segmentation map.*<br>
 <br>
 
