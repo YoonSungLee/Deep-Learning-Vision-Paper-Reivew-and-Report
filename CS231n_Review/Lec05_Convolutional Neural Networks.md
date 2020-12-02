@@ -10,9 +10,9 @@ https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv
 
 # 1. Convolutional Layer
 
-<img src='image/cs231n018.png' width='100%'>
+<img src='Image/cs231n018.png' width='100%'>
 
-<img src='image/cs231n019.png' width='100%'>
+<img src='Image/cs231n019.png' width='100%'>
 
 parameter의 수를 계산할 때에는 bias를 명심하자.
 
@@ -22,7 +22,7 @@ parameter의 수를 계산할 때에는 bias를 명심하자.
 
 한 뉴런이 한 번에 수용할 수 있는 영역
 
-<img src='image/cs231n020.png' width='100%'>
+<img src='Image/cs231n020.png' width='100%'>
 
 위의 예시에서 28x28x5 filter 중의 한 영역인 5개의 뉴런은 동일한 input 공간을 보지만(receptive field가 동일하지만) 서로 다른 특징을 추출한다.
 
@@ -30,7 +30,7 @@ parameter의 수를 계산할 때에는 bias를 명심하자.
 
 # 3. Pooling layer
 
-<img src='image/cs231n021.png' width='100%'>
+<img src='Image/cs231n021.png' width='100%'>
 
 * 파라미터의 수 감소
 * 공간적인 불변성(invariance)을 얻기 위함
