@@ -133,4 +133,97 @@ while True:
 * learning rate decay는 부차적인(second-order) 하이퍼파라미터이다. 일반적으로 learning rate decay를 학습 초기부터 고려하지는 않는다. 보통 학습 초기에는 learning rate decay가 없다고 생각하고 learning rate를 잘 선택하는 것이 중요하다. learning rate와 decay 등을 cross-validate하려고 한다면 문제가 너무 복잡해진다.
 * learning rate decay를 설정하는 순서는, 우선 decay 없이 학습을 시켜본다. 그리고 loss curve를 잘 살피고 있다가 decay가 필요한 곳이 어디인지 고려해 보는 것이 좋다.
 
-47:15~
+
+
+# 3. Dropout
+
+```python
+p = 0.5	# probability of keeping a unit active. higher = less dropout
+
+def train_step(X):
+    """X contains the data"""
+    
+    # forward pass for example 3-layer neural network
+    H1 = np.maximum(0, np.dot(W1, X) + b1)
+    U1 = np.random.rand(*H1.shape) < p	# first dropout mask
+    H1 *= U1	# drop!
+    H2 = np.maximum(0, np.dot(W2, H1) + b2)
+    U2 = np.random.rand(*H2.shape) < p	# second dropout mask
+    H2 *= U2	# drop!
+    out = np.dot(W3, H2) + b3
+    
+    # backward pass: compute gradient... (not shown)
+    # perform parameter update... (not shown)
+    
+def predict(X):
+    # ensembled forward pass
+    H1 = np.maximum(0, np.dot(W1, X) + b1) * p	# NOTE: scale the activations
+    H2 = np.maximum(0, np.dot(W2, H1) + b2) * p	# NOTE: scale the activations
+    out = np.dot(W3, H2) + b3
+```
+
+
+
+<img src='Image/cs231n039.png' width='100%'>
+
+<img src='Image/cs231n040.png' width='100%'>
+
+
+
+*More common: "Inverted dropout"*<br>
+
+```python
+p = 0.5	# probability of keeping a unit active. higher = less dropout
+
+def train_step(X):
+    """X contains the data"""
+    
+    # forward pass for example 3-layer neural network
+    H1 = np.maximum(0, np.dot(W1, X) + b1)
+    U1 = np.random.rand(*H1.shape) < p	/ p	# first dropout mask. Notice /p!
+    H1 *= U1	# drop!
+    H2 = np.maximum(0, np.dot(W2, H1) + b2)
+    U2 = np.random.rand(*H2.shape) < p / p	# second dropout mask. Notice /p!
+    H2 *= U2	# drop!
+    out = np.dot(W3, H2) + b3
+    
+    # backward pass: compute gradient... (not shown)
+    # perform parameter update... (not shown)
+    
+def predict(X):
+    # test time is unchanged!
+    # ensembled forward pass
+    H1 = np.maximum(0, np.dot(W1, X) + b1)	# no scaling necesssary
+    H2 = np.maximum(0, np.dot(W2, H1) + b2)	# no scaling necesssary
+    out = np.dot(W3, H2) + b3
+```
+
+
+
+# 4. Data Augmentation
+
+
+
+# 5. Regularization: A common pattern
+
+<img src='Image/cs231n041.png' width='100%'>
+
+
+
+* Dropout
+* Batch Normalization
+* Data Augmentation
+
+
+
+# 6. Transfer Learning
+
+<img src='Image/cs231n042.png' width='100%'>
+
+
+
+보통 기존의 learning rate보다는 낮춰서 학습시킨다. 왜냐하면 기존의 가중치들이 이미 ImageNet과 같은 데이터셋으로 잘 학습되어 있고 이 가중치들이 대게는 아주 잘 동작하기 때문이다. 우리가 가진 데이터셋에서의 성능을 높이기 위해서라면 그 가중치들을 아주 조금씩만 수정하면 될 것이다.<br>
+
+
+
+<img src='Image/cs231n043.png' width='100%'>
