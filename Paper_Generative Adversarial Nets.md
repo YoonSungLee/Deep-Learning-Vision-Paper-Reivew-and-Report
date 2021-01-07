@@ -42,8 +42,18 @@ GAN 모델이 발표되기 전에 해당 분야에 대한 연구 현황을 나�
 
 <img src='Image/GAN004.PNG' width='100%'>
 
-논문의 저자는 GAN의 학습 과정을 쉽게 이해하도록 하기 위해 위와 같은 그림을 제시한다. z는 uniform distribution이나 gaussian distribution과 같은 임의의 분포이고, x는 기존 dataset(domain)의 영역이다. z에서 x로 매핑하는 과정을 G가 담당한다. 검정색 점의 분포는 기존 dataset의 distribution을 의미하고, 초록색 선의 분포는 G가 만들어낸 dataset의 distribution을 의미한다. 이 때 기존 dataset은 무한이 아니기 때문에 '점'으로 표현하고, 반면에 G가 만들어내는 dataset은 연속적으로 만들어낼 수 있기 때문에 '선'으로 표현한다. 그리고 파란색 선은 D가 특정 dataset point를 기존 dataset의 distribution에서 추출한 것이라고 판별하는 estimation을 의미한다.<br>
-학습을 시작하기 전에는 (a)와 같은 형태를 띤다. G가 학습되지 않은 단계이기 때문에, D는 어느 정도 예측을 하는 수준임을 확인할 수 있다. (먼저 D를 학습하는 과정을 거치는데, 이를 통해 D는 특정 dataset point가 어떤 distribution에서 도출된 것인지(real or fake) 잘 판별하게 되어 (b)와 같은 형태로 바뀐다. 이후 G를 학습하면, G의 model distribution이 점점 data distribution과 유사하지기 때문에 (c)와 같은 형태를 띤다. D와 G의 학습 과정을 지속적으로 반복하면, G는 더더욱 실제 data와 유사한 data를 생성해내기 때문에 결국 D의 추정은 항상 1/2를 도출한다. (d)가 이에 해당한다.<br>
+논문의 저자는 GAN의 학습 과정을 쉽게 이해하도록 하기 위해 위와 같은 그림을 제시한다.
+
+* z는 uniform distribution이나 gaussian distribution과 같은 임의의 분포이고, x는 기존 dataset(domain)의 영역이다.
+* z에서 x로 매핑하는 과정을 G가 담당한다.
+* 검정색 점의 분포는 기존 dataset의 distribution을 의미한다.
+* 초록색 선의 분포는 G가 만들어낸 dataset의 distribution을 의미한다.
+* 이 때 기존 dataset은 무한이 아니기 때문에 '점'으로 표현하고, 반면에 G가 만들어내는 dataset은 연속적으로 만들어낼 수 있기 때문에 '선'으로 표현한다.
+* 파란색 선은 D가 특정 dataset point를 기존 dataset의 distribution에서 추출한 것이라고 판별하는 estimation을 의미한다.
+
+
+
+학습을 시작하기 전에는 (a)와 같은 형태를 띤다. G가 학습되지 않은 단계이기 때문에, D는 어느 정도 예측을 하는 수준임을 확인할 수 있다. 먼저 D를 학습하는 과정을 거치는데, 이를 통해 D는 특정 dataset point가 어떤 distribution에서 도출된 것인지(real or fake) 잘 판별하게 되어 (b)와 같은 형태로 바뀐다. 이후 G를 학습하면, G의 model distribution이 점점 data distribution과 유사하지기 때문에 (c)와 같은 형태를 띤다. D와 G의 학습 과정을 지속적으로 반복하면, G는 더더욱 실제 data와 유사한 data를 생성해내기 때문에 결국 D의 추정은 항상 1/2를 도출한다. (d)가 이에 해당한다.<br>
 <br>
 
 
@@ -62,4 +72,41 @@ Question) 이해 필요<br>
 
 # 4. Theoretical Results
 
-To Do~
+<img src='Image/GAN005.PNG' width='100%'>
+
+# 5. Experiments
+
+(...skip...)
+
+# 6. Advantages and disadvantages
+
+*The disadvantages are primarily that there is no explicit representation of pg(x), and that D must be synchronized well with G during training (in particular, G must not be trained too much without updating D, in order to avoid “the Helvetica scenario” in which G collapses too many values of z to the same value of x to have enough diversity to model pdata), much as the negative chains of a Boltzmann machine must be kept up to date between learning steps.*<br>
+논문의 저자는 GAN의 장단점을 말미에 언급한다. GAN의 단점은 아래와 같다.
+
+* pg(x)를 명시적으로 표현할 수 없다.
+* 학습 중에는 G와 D가 잘 동기화(?) 되어있어야 한다. 특히 D의 업데이트 없이 G가 너무 많이 학습되지 않아야 한다.
+  * Question) 이유?
+
+<br>
+
+
+
+*The advantages are that Markov chains are never needed, only backprop is used to obtain gradients, no inference is needed during learning, and a wide variety of functions can be incorporated into the model.*<br>
+*Adversarial models may also gain some statistical advantage from the generator network not being updated directly with data examples, but only with gradients flowing through the discriminator.*<br>
+*Another advantage of adversarial networks is that they can represent very sharp, even degenerate distributions, while methods based on Markov chains require that the distribution be somewhat blurry in order for the chains to be able to mix between modes.*<br>
+GAN의 장점은 아래와 같다.
+
+* 마코프체인이 더 이상 필요 없이 backpropagation 기법으로 학습 가능하다.
+  * 마코프체인의 개념은 잘 모르지만, 해당 기법은 시간 혹은 공간복잡도 측면에서 비효율적일것으로 추측된다.
+* 학습 중에 inference를 할 필요가 없다.
+* 다양한 함수들이 통합될 수 있다.
+* G는 data example을 직접적으로 update하지 않는다.
+  * Question
+* GAN은 마코프체인기반 방법들에 비해 sharp하고 degenerate한 분포를 만들 수 있다.
+  * Question
+
+
+
+# 7. Conclusions and further work
+
+(...skip...)
