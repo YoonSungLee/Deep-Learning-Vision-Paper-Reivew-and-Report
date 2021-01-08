@@ -32,8 +32,12 @@ GAN 모델이 발표되기 전에 해당 분야에 대한 연구 현황을 나�
 
 <img src='Image/GAN003.PNG' width='100%'>
 
-위 수식에 대한 설명은 Report에 이미 다룬 바 있으므로, 그 내용을 그대로 차용함을 밝힌다.
+위 수식에 대한 설명은 GAN Report에서 이미 다룬 바 있으므로, 그 내용을 그대로 차용함을 밝힌다.
 
+* GAN(G + D)을 학습하여 궁극적으로 사용하고자 하는 모델은 G이며, D는 G가 잘 학습할 수 있도록 도와주는 역할을 한다.
+* x~pdata(x): 원본 데이터의 분포에서 하나의 데이터 x를 샘플링
+* z~pz(z): 노이즈 데이터의 분포에서 하나의 데이터 z를 샘플링
+* E: 기댓값으로써, 프로그램상에서는 단순히 모든 데이터를 하나씩 확인하여 식에 대입한 뒤에 평균을 계산
 * V(D, G)에 대하여 G는 이 값을 minimize하려고 하고, D는 maximize하려고 한다. 이러한 목표를 봤을 때 G와 D 각각은 V(D, G)를 어떤 방향으로 이끌어가는지 생각하는 것이 중요하다.
 * D 관점에서 봤을 때, logD(x)를 maximize하려고 하므로 D(x)는 1에 가까운 값을 얻으려고 할 것이다. 또한 log(1-D(G(z)))를 maximize하려고 하므로 1-D(G(z))는 1에 가까운 값 즉, D(G(z))는 0에 가까운 값을 얻으려고 할 것이다. 이를 해석하자면 D는 x를 실제(Real)라고 잘 분류하고, G(z)(G가 z를 통해 만든 가짜 데이터)를 가짜(Fake)라고 잘 분류하도록 학습이 된다.
 * G 관점에서 봤을 때, log(1-D(G(z)))를 minimize하려고 하므로 1-D(G(z))는 0에 가까운 값 즉, D(G(z))는 1에 가까운 값을 얻으려고 할 것이다. 이를 해석하자면 G는 z를 통해 생성한 데이터를 D가 실제(Real)라고 잘 분류하도록 학습이 된다. 즉, 가짜 데이터셋을 잘 만들도록 학습이 된다.
@@ -44,7 +48,7 @@ GAN 모델이 발표되기 전에 해당 분야에 대한 연구 현황을 나�
 
 논문의 저자는 GAN의 학습 과정을 쉽게 이해하도록 하기 위해 위와 같은 그림을 제시한다.
 
-* z는 uniform distribution이나 gaussian distribution과 같은 임의의 분포이고, x는 기존 dataset(domain)의 영역이다.
+* z는 uniform distribution이나 gaussian distribution과 같은 임의의 분포(noise distribution)이고, x는 기존 dataset(domain)의 영역이다.
 * z에서 x로 매핑하는 과정을 G가 담당한다.
 * 검정색 점의 분포는 기존 dataset의 distribution을 의미한다.
 * 초록색 선의 분포는 G가 만들어낸 dataset의 distribution을 의미한다.
@@ -58,15 +62,21 @@ GAN 모델이 발표되기 전에 해당 분야에 대한 연구 현황을 나�
 
 
 
+*discussion*<br>
+학습이 진행될수록 G는 목표를 달성해가지만 D는 그렇지 못한다는 것을 알 수 있다. 이는 수학적 수식에 의해 증명된 사실이기 때문이다.<br>
+<br>
+
+
+
 *Optimizing D to completion in the inner loop of training is computationally prohibitive, and on finite dataset would result in overfitting. Instead, we alternate between k steps of optimizing D and one step of optimizing G. This results in D being maintained near its optimal solution, so long as G changes slowly enough.*<br>
 Question) 이해 필요<br>
 <br>
 
 
 
-*Rather than training G to minimize log(1 - D(G(z))) we can train G to maximize logD(G(z)). This objective function results in the same fixed point of the dynamics of G and D but provides much stronger gradients early in learning*<br>
-Question) 이해 필요<br>
-<br>
+*Rather than training G to minimize log(1 - D(G(z))) we can train G to maximize logD(G(z)). This objective function results in the same fixed point of the dynamics of G and D but provides much stronger gradients early in learning.*<br>
+
+G를 학습할 때 log(1 - D(G(z)))를 최소화하는것보다 log(D(G(z))를 최대화하는 방향으로 설정하는 것이, 학습 초기에 더 높은 gradient를 가질 수 있기 때문에 성능이 더 좋을 수 있다는 것을 실험적으로 발견한 내용을 언급한다.<br>
 
 
 
@@ -102,8 +112,7 @@ GAN의 장점은 아래와 같다.
 * 다양한 함수들이 통합될 수 있다.
 * G는 data example을 직접적으로 update하지 않는다.
   * Question
-* GAN은 마코프체인기반 방법들에 비해 sharp하고 degenerate한 분포를 만들 수 있다.
-  * Question
+* GAN은 마코프체인기반 방법들에 비해 blurry하지 않고 sharp한 이미지를 얻을 수 있다.
 
 
 
