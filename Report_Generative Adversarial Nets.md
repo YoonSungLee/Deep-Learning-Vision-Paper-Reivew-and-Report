@@ -73,6 +73,25 @@ Reference) [[link]](https://www.youtube.com/watch?v=AVvlDmhHgC4)
 
 Reference) [[link]](https://www.youtube.com/watch?v=kLDuxRtxGD8)
 
+## 1. Prerequisties
+
+* Unsupervised Learning
+  * meaning: No label or curriculum
+  * Boltzmann machine
+  * Auto-encoder or Variation Inference
+  * Generative Adversarial Network
+
+
+
+## 2. Two Step Approach
+
+Show that...
+
+1. The minmax problem of GAN has a global optimum at pg = pdata
+2. The proposed algorithm(alternative algorithm) can find that global optimum
+
+위 두 가정은 수학적 전개를 통해 증명한다. 2번의 경우는 C(G) = 2 * JSD(pdata||pg) - log(4)의 형태가 convex인 것을 언급하면서 rough하게 설명한다. 참고로 JSD는 두 distribution의 distance를 의미하며, 항상 0 이상의 값을 가진다. 따라서 C(G)는 global minimum이 -log(4)인 convex function이라고 (rough하게) 말할 수 있다.
+
 
 
 # 3. CS231N: Lecture 13. Generative Models
