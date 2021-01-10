@@ -67,11 +67,15 @@ Reference) [[link]](https://www.youtube.com/watch?v=AVvlDmhHgC4)
 
 <img src='Image/GAN007.PNG' width='100%'>
 
+* KL(Kullback-Leibler divergence): KL(P||Q) --> P라는 distribution이 있을 때, (보통은 estimate한) Q가 P랑 얼마나 다른지 측정하는 값
+
 
 
 # 2. PR12: GANs (by Jaejun Yoo)
 
-Reference) [[link]](https://www.youtube.com/watch?v=kLDuxRtxGD8)
+Reference) [[link]](https://www.youtube.com/watch?v=kLDuxRtxGD8)<br>
+Reference) 초짜 대학원생 입장에서 이해하는 Generative Adversarial Nets (1) [[link]](http://jaejunyoo.blogspot.com/2017/01/generative-adversarial-nets-1.html)<br>
+Reference) 초짜 대학원생 입장에서 이해하는 Generative Adversarial Nets (2) [[link]](http://jaejunyoo.blogspot.com/2017/01/generative-adversarial-nets-2.html)
 
 ## 1. Prerequisties
 
@@ -94,6 +98,131 @@ Show that...
 
 
 
-# 3. CS231N: Lecture 13. Generative Models
+# 3. 1시간만에 GAN(Generative Adversarial Network) 완전 정복하기
 
-Reference) [[link]](https://www.youtube.com/watch?v=5WoItGTWV54&list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv&index=13)
+Reference) [[link]](https://www.youtube.com/watch?v=odpjk7_tGY0)
+
+## 1. Code
+
+```python
+# 의미상 코드
+
+import torch
+import torch.nn as nn
+
+D = nn.Sequential(
+	nn.Linear(784, 128),
+	nn.ReLU(),
+	nn.Linear(128, 1),
+	nn.Sigmoid())
+	
+G = nn.Sequential(
+	nn.Linear(100, 128),
+	nn.ReLU(),
+	nn.Linear(128, 784),
+	nn.Tanh())
+	
+criterion = nn.BCELoss()
+
+d_optimizer = torch.optim.Adam(D.parameters(), lr=0.01)
+g_optimizer = torch.optim.Adam(G.parameters(), lr=0.01)
+
+# Assume x be real images of shape (batch_size, 784)
+# Assume z be random noise of shape (batch_size, 100)
+
+while True:
+	# train D
+	loss = criterion(D(x), 1) + criterion(D(G(z)), 0)
+	loss.backward()
+	d_optimizer.step()
+	
+	# train G
+	loss = criterion(D(G(z)), 1)
+	loss.backward()
+	g_optimizer.step()
+```
+
+
+
+## 2. Non-Saturating Game
+
+<img src="image/GAN008.PNG" width='100%'>
+
+<img src='Image/GAN009.PNG' width='100%'>
+
+G를 학습할 때 log(1 - D(G(z)))를 최소화하는 방향이 아니라, log(D(G(z)))를 최대화하는 방향으로 loss function을 설정한다.<br>
+학습 초기에는 G가 fake에 가까운 이미지를 output으로 출력하기 때문에 D가 이를 판별하기가 쉽다. 따라서 D(G(z))는 0에 수렴하고, 이 때의 gradient값은 굉장히 작다. 따라서 이러한 현상을 해결하기 위해 log(D(G(z)))를 최대화하는 방향으로 학습하면 굉장히 큰 값의 gradient를 얻을 수 있다. binary cross entropy 관점에서 두 loss fuction의 방향성은 같다는 것을 확인할 수 있다.
+
+
+
+## 3. Deep Convolutional GAN(DCGAN), 2015
+
+FC가 아닌 CNN을 통해 Discriminator를 구현하고, deconvolution(또는 transpose convolution)을 통해 Generator를 구현한 모델을 DCGAN이라고 한다. pooling layer를 사용하면 이미지가 깨지는 문제가 발생할 수 있기 때문에 이는 사용하지 않는다는 것이 특징이다.
+
+<img src='Image/GAN010.PNG' width='100%'>
+
+<img src='Image/GAN011.PNG' width='100%'>
+
+
+
+## 4. Least Squares GAN(LSGAN), 2016
+
+```python
+# 의미상 코드
+
+D = nn.Sequential(
+	nn.Linear(784, 128),
+	nn.ReLU(),
+	nn.Linear(128, 1))
+
+G = nn.Sequential(
+	nn.Linear(100, 128),
+	nn.ReLU(),
+	nn.Linear(128, 784),
+	nn.Tanh())
+
+# Loss of D
+# D(x) gets closer to 1
+# D(G(z)) gets closer to 0
+# (same as original)
+D_loss = torch.mean((D(x) - 1)**2) + torch.mean(D(G(z))**2)
+
+# Loss of G
+# D(G(z)) gets closer to 1
+# (same as original)
+G_loss = torch.mean((D(G(z)) - 1)**2)
+```
+
+*Question*<br>
+기존 GAN의 loss function을 바꿈으로써, G에 의해서 생성된 이미지가 data distribution의 boundary 안으로 들어오게 하는 효과를 준다. 이를 통해 D를 속이더라도 기존 data와 유사한 이미지를 생성할 수 있다. *but 근거에 대한 이해가 부족하다.*
+
+
+
+## 5. Semi-Supervised GAN(SGAN), 2016
+
+SGAN에서 D는 단순히 real or fake만을 판별하는 것이 아니라, 클래스 자체를 판별한다. 여기서는 새로운 클래스(MNIST의 경우 11이라는 클래스)를 fake라고 정의한다. 따라서 D는 기존 데이터에 대해서 레이블링된 클래스를 예측하고, G가 생성한 데이터에 대해서 fake라는 클래스를 예측하는 것이 목적이다. 반면에 G는 latent vector와 레이블을 입력하여 데이터를 생성하면, D가 그것을 설정한 레이블로 예측하도록 하는 것이 목적이다. SGAN의 특징은 원하는 레이블을 가지고 있는 데이터를 생성할 수 있다는 점이다.
+
+<img src='Image/GAN012.PNG' width='100%'>
+
+
+
+## 6. Auxiliary Classfier GAN(ACGAN), 2016
+
+ACGAN은 SGAN에서 좀 더 발전된 형태이다. SGAN의 D는 real이라면 어떤 클래스인지를 예측하고, fake라면 fake 자체를 예측했다. 반면에 ACGAN의 D는 multi-task learning으로써, (1) real or fake인지를 예측하고(sigmoid function), (2) (fake라고 하더라도) 어떤 클래스인지를 예측한다(softmax function). 이를 통해 G에서 생성된 이미지일지라도 D는 fake image에 대한 class를 학습하는 효과를 얻을 수 있다. G가 학습할수록 더 real에 가까운 데이터를 생성하기 때문이다. 이는 augmentation과 같은 역할을 하여 모델을 좀 더 robust하게 만들 수 있게 해준다. 이전까지의 모델들과는 달리 D에 좀 더 집중을 하여 모델을 구성했다고 직관적으로 해석할 수 있다.
+
+<img src='Image/GAN013.PNG' width='100%'>
+
+## 7. CycleGAN: Unpaired Image-to-Image Translation
+
+(...skip...)
+
+<img src='Image/GAN014.PNG' width='100%'>
+
+
+
+## 8. StackGAN: Text to Photo-realistic Image Synthesis
+
+(...skip...)<br>
+(아래 모델 구조는 StackGAN의 일부를 표현함)
+
+<img src='Image/GAN015.PNG' width='100%'>

@@ -76,7 +76,27 @@ Question) 이해 필요<br>
 
 *Rather than training G to minimize log(1 - D(G(z))) we can train G to maximize logD(G(z)). This objective function results in the same fixed point of the dynamics of G and D but provides much stronger gradients early in learning.*<br>
 
-G를 학습할 때 log(1 - D(G(z)))를 최소화하는것보다 log(D(G(z))를 최대화하는 방향으로 설정하는 것이, 학습 초기에 더 높은 gradient를 가질 수 있기 때문에 성능이 더 좋을 수 있다는 것을 실험적으로 발견한 내용을 언급한다.<br>
+G를 학습할 때 log(1 - D(G(z)))를 최소화하는것보다 log(D(G(z))를 최대화하는 방향으로 설정하는 것이, 학습 초기에 더 높은 gradient를 가질 수 있기 때문에 성능이 더 좋을 수 있다는 것을 실험적으로 발견한 내용을 언급한다. 이와 관련된 설명을 한 블로그에서 찾을 수 있었다. 발췌한 내용은 아래와 같다.<br>
+
+```
+논문에서 한 가지 실용적인 tip이 나오는데, 위에 value function에서 log(1−D(G(z))) 부분을 G에 대해 minimize하는 대신 log(D(G(z)))를 maximize하도록 G를 학습시킨다는 것입니다.
+
+나중에 저자가 밝히 듯이 이 부분은 전혀 이론적인 동기로부터 수정을 한 것이 아니라 순수하게 실용적인 측면에서 적용을 하게 된 것이라 합니다.
+
+이유도 아주 직관적인데 예를 들어 학습 초기를 생각해보면, G가 초기에는 아주 이상한 image들을 생성하기 때문에 D가 너무도 쉽게 이를 real image와 구별하게 되고 따라서 log(1−D(G(z))) 값이 매우 saturate하여 gradient를 계산해보면 아주 작은 값이 나오기 때문에 학습이 엄청 느립니다.
+
+하지만 문제를 G=argmaxG log(D(G(z)))로 바꾸게 되면, 초기에 D가 G로 나온 image를 잘 구별한다고 해도 위와 같은 문제가 생기지 않기 때문에 원래 문제와 같은 fixed point를 얻게 되면서도 stronger gradient를 줄 수 있는 상당히 괜찮은 해결방법이죠.
+```
+
+또한 블로그 아래의 댓글에도 이와 관련된 내용이 추가로 설명되어 있다.
+
+```
+Q) 혹시 log(1 - D(G(z))를 미분했을 때 왜 작은 gradient 값이 발생하는지 좀 더 구체적으로 설명해주실 수 있으신가요?
+
+A) 안녕하세요. 초기에 G가 제대로 이미지를 생성 못할 때는 D가 구별하기 매우 쉽기 때문에 거의 항상 0값을 내놓은다고 생각해보시면 왜 그런지 알 수 있습니다. log 안에 값이 항상 1에 가깝고 그 주변에서 gradient도 매우 작죠.
+```
+
+Reference) 초짜 대학원생 입장에서 이해하는 Generative Adversarial Nets (1) [[link]](http://jaejunyoo.blogspot.com/2017/01/generative-adversarial-nets-1.html)
 
 
 
