@@ -135,7 +135,8 @@ GAN의 장점은 아래와 같다.
 * 학습 중에 inference를 할 필요가 없다.
 * 다양한 함수들이 통합될 수 있다.
 * G는 data example을 직접적으로 update하지 않는다.
-  * *question solved*) This means that components of the input are not copied directly into the generator’s parameters.
+  * *question solved 1*) This means that components of the input are not copied directly into the generator’s parameters.
+  * *question solved 2*) D의 학습 방향이 전체 데이터의 분포를 알아내는 것이기 때문에, G는 이를 간접적으로 gradient를 통해 학습함으로써 전체 데이터 분포에 대한 통계적 이점을 얻을 수 있다.
   * Reference) Overview Of Generative Adversarial Networks [[link]](https://www.c-sharpcorner.com/article/overview-of-generative-adversarial-networks/)
 * GAN은 마코프체인기반 방법들에 비해 blurry하지 않고 sharp한 이미지를 얻을 수 있다.
 
