@@ -96,7 +96,12 @@ Q) 혹시 log(1 - D(G(z))를 미분했을 때 왜 작은 gradient 값이 발생�
 A) 안녕하세요. 초기에 G가 제대로 이미지를 생성 못할 때는 D가 구별하기 매우 쉽기 때문에 거의 항상 0값을 내놓은다고 생각해보시면 왜 그런지 알 수 있습니다. log 안에 값이 항상 1에 가깝고 그 주변에서 gradient도 매우 작죠.
 ```
 
-Reference) 초짜 대학원생 입장에서 이해하는 Generative Adversarial Nets (1) [[link]](http://jaejunyoo.blogspot.com/2017/01/generative-adversarial-nets-1.html)
+이를 설명하는 그림은 아래와 같다.<br>
+
+<img src='Image/GAN016.PNG' width='100%'>
+
+Reference) 초짜 대학원생 입장에서 이해하는 Generative Adversarial Nets (1) [[link]](http://jaejunyoo.blogspot.com/2017/01/generative-adversarial-nets-1.html)<br>
+Reference) 1. Generative Adversarial Networks 개요 [2] [[link]](https://blog.naver.com/PostView.nhn?blogId=laonple&logNo=221195944242&categoryNo=22&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView)
 
 
 
@@ -115,11 +120,10 @@ Reference) 초짜 대학원생 입장에서 이해하는 Generative Adversarial 
 
 * pg(x)를 명시적으로 표현할 수 없다.
 * 학습 중에는 G와 D가 잘 동기화(?) 되어있어야 한다. 특히 D의 업데이트 없이 G가 너무 많이 학습되지 않아야 한다.
-  * Question) 이유?
+  * *question solved*) 학습시킬 때, inner loop에서 D를 최적화하는 것은 매우 많은 계산을 필요로 하고 유한한 데이터셋에서는 overfitting을 초래하기 때문에, k step만큼 D를 최적화하고 G는 1 step만 최적화하도록 한다.
+  * Reference) GAN(Generative Adversarial Networks), GAN 논문 설명 [[link]](https://greeksharifa.github.io/generative%20model/2019/03/03/GAN/)
 
 <br>
-
-
 
 *The advantages are that Markov chains are never needed, only backprop is used to obtain gradients, no inference is needed during learning, and a wide variety of functions can be incorporated into the model.*<br>
 *Adversarial models may also gain some statistical advantage from the generator network not being updated directly with data examples, but only with gradients flowing through the discriminator.*<br>
@@ -131,7 +135,8 @@ GAN의 장점은 아래와 같다.
 * 학습 중에 inference를 할 필요가 없다.
 * 다양한 함수들이 통합될 수 있다.
 * G는 data example을 직접적으로 update하지 않는다.
-  * Question
+  * *question solved*) This means that components of the input are not copied directly into the generator’s parameters.
+  * Reference) Overview Of Generative Adversarial Networks [[link]](https://www.c-sharpcorner.com/article/overview-of-generative-adversarial-networks/)
 * GAN은 마코프체인기반 방법들에 비해 blurry하지 않고 sharp한 이미지를 얻을 수 있다.
 
 
