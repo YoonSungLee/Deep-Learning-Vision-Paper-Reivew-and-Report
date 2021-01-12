@@ -1,4 +1,4 @@
-# GAN survey
+# Generative Adversarial Networks survey
 
 
 
