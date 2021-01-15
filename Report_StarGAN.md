@@ -45,7 +45,7 @@ Reference) [[link]](https://www.youtube.com/watch?v=-r9M4Cj9o_8)
 
 ## 4. 연구 배경: Image-to-Image Translation: Cycle GAN
 
-* CycleGAN은 G(x)가 다시 원본 이미지 x로 재구성(reconstrut)될 수 있는 형태로 만들어지도록 합니다.
+* CycleGAN은 G(x)가 다시 원본 이미지 x로 재구성(reconstruct)될 수 있는 형태로 만들어지도록 합니다.
   * 이를 통해 원본 이미지의 content(or identity)는 보존(preserve)하고 도메인과 관련한 특징을 바꿀 수 있습니다.
 * F: Y domain에서 X domain으로 보내주는 역할을 하는 inverse mapping을 수행하는 function
 

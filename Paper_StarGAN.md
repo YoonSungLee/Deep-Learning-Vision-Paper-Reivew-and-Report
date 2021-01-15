@@ -19,7 +19,7 @@ StarGAN은 다수의 domain을 가진 task에서 오직 하나의 모델을 사�
 
 <img src="Image/StarGAN_009.PNG" width='100%'>
 
-*Question) 논문에서 제시된 두 dataset은 각각을 domain이라고 할 수 있는가?*<br>
+*`Question) 논문에서 제시된 두 dataset은 각각을 domain이라고 할 수 있는가?`*<br>
 *However, existing models are both inefficient and ineffective in such multi-domain image translation tasks. Their inefficiency results from the fact that in order to learn all mappings among k domains, k(k-1) generators have to be trained.*<br>
 기존 모델은 multi-domain-image-to-image translation을 수행함에 있어서 비효율적이다. 위 이미지의 (a)에서 그 이유를 설명한다. 만약 4개의 domain을 가진 task를 수행하고자 한다면, 2개의 domain I2I translation을 담당하는 Generator 모델을 총 12개 만들어야 한다. 즉, k개의 domain이 존재하는 task는 총 k(k-1)개의 Generator가 각각 학습되어야 한다는 것을 의미한다.<br>
 <br>
@@ -76,7 +76,7 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 
 <img src='Image/StarGAN_012.PNG' width='100%'>
 
-`Question) G를 학습하는 과정에서, 만약 D가 G(x,c)를 fake라고 분류하면 c에 대한 학습을 할 수 없는 것 아닌가?`<br>
+*`Question) G를 학습하는 과정에서, 만약 D가 G(x,c)를 fake라고 분류하면 c에 대한 학습을 할 수 없는 것 아닌가?`*<br>
 따라서 위의 두 term을 정의하고 각각 G와 D의 loss function에 추가시킨다. 이를 통해 G는 target domain c로 분류될 수 있는 이미지를 생성하는 방향으로 학습되고, D는 real이라고 판별한 이미지의 original domain c'을 잘 분류할 수 있는 방향으로 학습된다.<br>
 <br>
 
@@ -84,7 +84,7 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 
 <img src='Image/StarGAN_013.PNG' width='100%'>
 
-`Question) 이 방법이 input image의 컨텐츠를 보존할 수 있다는 것이랑 무슨 관련이 있는지?`<br>
+*`Question) 이 방법이 input image의 컨텐츠를 보존할 수 있다는 것이랑 무슨 관련이 있는지?`*<br>
 *However, minimizing the losses (Eqs. (1) and (3)) does not guarantee that translated images preserve the content of its input images while changing only the domain-related part of the inputs. To alleviate this problem, we apply a cycle consistency loss [9, 33] to the generator,*<br>
 위의 두 loss function만으로는 translated image가 input image의 컨텐츠를 보존한다는 것을 보장하지 않는다는 지적을 한다. 이에 따라 G에 cycle consistency loss를 적용하여 문제를 해결한다. 위의 식에서 G(x, c)는 original domain c'에서 target domain c로 변환하는 term이다. G(G(x, c), c')은 변환된 target domain c에서 다시 original domain c'으로 변환하는 term이다. 즉, 기존의 이미지 x와 변환을 두 번 반복한 이미지 G(G(x, c), c')의 L1을 loss function으로 설정함으로써, input image의 컨텐츠를 보존할 수 있다.<br>
 <br>
@@ -145,4 +145,7 @@ GAN을 다루었을때의 내용처럼 1 epoch당 (D 학습 여러 번 + G 학�
 <img src='Image/StarGAN_016.PNG' width='100%'>
 
 *Fig. 8 shows an overview of StarGAN when learning from both the CelebA and RaFD datasets. As can be seen at the top of the figure, the label for CelebA contains binary attributes (Black, Blond, Brown, Male, and Young), while the label for RaFD provides information on categorical attributes (Angry, Fearful, Happy, Sad, and Disgusted). The mask vector is a two-dimensional one-hot vector which indicates whether the CelebA or RaFD label is valid.*<br>
-논문에서는 마지막 단락에서 CelebA와 RaFD dataset으로 학습하는 StarGAN의 overview를 보여주면서 독자의 이해를 돕는다. CelebA는 binary attributes를 가지고 있는 반면, RaFD는 categorical attributes를 가지고 있다. 또한 2차원의 one-hot vector인 mask vector를 확인할 수 있다.
+논문에서는 마지막 단락에서 CelebA와 RaFD dataset으로 학습하는 StarGAN의 overview를 보여주면서 독자의 이해를 돕는다. CelebA는 binary attributes를 가지고 있는 반면, RaFD는 categorical attributes를 가지고 있다. 또한 2차원의 one-hot vector인 mask vector를 확인할 수 있다.<br>
+<br>
+
+*`Question) mask vector를 이용하여 특정 domain에서 control을 해주는 것을 확인했다. 그렇다면 두 domain을 동시에 설정하여 생성할 수는 없는가? ex) (CelebA의 Black + Brown + Male)과 (RaFD의 Happy)에 해당하는 이미지 생성`*
