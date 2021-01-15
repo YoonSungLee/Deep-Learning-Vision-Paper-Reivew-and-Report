@@ -8,7 +8,7 @@ Reference) StarGAN (꼼꼼한 딥러닝 논문 리뷰와 코드 실습) [[link]]
 # Abstract
 
 *However, existing approaches have limited scalability and robustness in handling more than two domains, since different models should be built independently for every pair of image domains.*<br>
-기존 연구들의 단점을 먼저 언급한다. 2개의 domain 상에서 I2I translation에 대한 연구가 활발히 진행되고 있다. 그러나 domain 한 쌍마다 각각의 독립적인 모델을 필요로 하는 접근 방법으로 인해 2개 이상의 domain을 다루는 task에서 scalability(확장성)과 robustnesss가 부족함을 지적한다.<br>
+2개의 domain 상에서 I2I translation에 대한 연구가 활발히 진행되고 있다. 그러나 기존 연구들은 한 쌍의 domain마다 각각의 독립적인 모델을 필요로 한다. 따라서 2개 이상의 domain을 다루는 task에서 scalability(확장성)과 robustnesss가 부족함을 지적하며 기존 모델들의 한계를 언급한다.<br>
 <br>
 
 *To address this limitation, we propose StarGAN, a novel and scalable approach that can perform image-to-image translations for multiple domains using only a single model.*<br>
@@ -19,6 +19,7 @@ StarGAN은 다수의 domain을 가진 task에서 오직 하나의 모델을 사�
 
 <img src="Image/StarGAN_009.PNG" width='100%'>
 
+*Question) 논문에서 제시된 두 dataset은 각각을 domain이라고 할 수 있는가?*<br>
 *However, existing models are both inefficient and ineffective in such multi-domain image translation tasks. Their inefficiency results from the fact that in order to learn all mappings among k domains, k(k-1) generators have to be trained.*<br>
 기존 모델은 multi-domain-image-to-image translation을 수행함에 있어서 비효율적이다. 위 이미지의 (a)에서 그 이유를 설명한다. 만약 4개의 domain을 가진 task를 수행하고자 한다면, 2개의 domain I2I translation을 담당하는 Generator 모델을 총 12개 만들어야 한다. 즉, k개의 domain이 존재하는 task는 총 k(k-1)개의 Generator가 각각 학습되어야 한다는 것을 의미한다.<br>
 <br>
@@ -64,7 +65,7 @@ StarGAN은 이미지와 domain 정보를 모두 input으로 받고, 유연하게
 <img src='Image/StarGAN_011.PNG' width='100%'>
 
 *To make the generated images indistinguishable from real images, we adopt an adversarial loss where G generates an image G(x, c) conditioned on both the input image x and the target domain label c, while D tries to distinguish between real and fake images.*<br>
-StarGAN의 loss function은 크게 3가지로 분류할 수 있다. 'Adversarial Loss', 'Domain Classification Loss', 'Reconstruction Loss'가 그것이다. 이 중 Adversarial Loss는 기존 GAN의 loss function과 유사하다. 차이라고 한다면, StarGAN은 특정한 조건(target domain label) c에서 G가 이미지를 생성한다. G는 위의 식을 최소화하는 방향으로, D는 최대화하는 방향으로 학습한다.<br>
+StarGAN의 loss function은 크게 3가지로 분류할 수 있다. 'Adversarial Loss', 'Domain Classification Loss', 'Reconstruction Loss'가 그것이다. 이 중 Adversarial Loss는 기존 GAN의 loss function과 유사하다. 차이라고 한다면, StarGAN의 G는 생성하고자 하는 조건(target domain label) c에 알맞는 이미지를 생성한다. G는 위의 식을 최소화하는 방향으로, D는 최대화하는 방향으로 학습한다.<br>
 <br>
 
 ### Domain Classification Loss
@@ -75,7 +76,7 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 
 <img src='Image/StarGAN_012.PNG' width='100%'>
 
-`Question) D와 G의 학습이 일어날때마다 domain classification loss를 D에서 추출하는가?`<br>
+`Question) G를 학습하는 과정에서, 만약 D가 G(x,c)를 fake라고 분류하면 c에 대한 학습을 할 수 없는 것 아닌가?`<br>
 따라서 위의 두 term을 정의하고 각각 G와 D의 loss function에 추가시킨다. 이를 통해 G는 target domain c로 분류될 수 있는 이미지를 생성하는 방향으로 학습되고, D는 real이라고 판별한 이미지의 original domain c'을 잘 분류할 수 있는 방향으로 학습된다.<br>
 <br>
 
@@ -97,17 +98,16 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 ## 3.2. Training with Multiple Datasets
 
 *An issue when learning from multiple datasets, however, is that the label information is only partially known to each dataset.*<br>
+multiple dataset을 학습할 때의 문제는 label 정보가 dataset마다 다르기 때문에 '부분적으로' 존재한다. 이는 translated image G(x, c)로부터 input image x로 reconstruction하려면 label vector c'에 완전한 정보가 있어야 하기 때문에 문제가 된다.<br>
 
-*Question) 의미?*<br>
-multiple dataset을 학습할때의 문제는 labe 정보가 dataset마다 다르기 때문에 '부분적으로' 존재한다. 이는 변환된 image G(x, c)로부터 input image x로 reconstruction하려면 label vector c'에 완전한 정보가 있어야 하기 때문에 문제가 된다.<br>
-<br>
+*Question solved - have to check) 이를 이해하려면 '학습'의 측면에서 생각해보는 것이 좋다. translated image에서 reconstruction한 image G(G(x, c), c')를 만든다고 해보자. 이 때 reconstruction하기 위해서는 c'에 대한 정보가 있어야 가능하다. 그런데 학습 데이터는 각 domain별로 각자의 label이 존재한다. 따라서 데이터의 종류를 파악하여 해당 데이터의 label로만 c'을 구성하기 위해 mask vector가 필요하다. 참고로 이렇게 reconstruction을 하는 이유는 reconstruction loss를 구하기 위함이다.*<br><br>
 
 ### Mask Vector
 
 <img src='Image/StarGAN_015.PNG' width='100%'>
 
 *To alleviate this problem, we introduce a mask vector m that allows StarGAN to ignore unspecified labels and focus on the explicitly known label provided by a particular dataset. In StarGAN, we use an n-dimensional one-hot vector to represent m, with n being the number of datasets. In addition, we define a unified version of the label as a vector,*<br>
-위의 문제를 해결하기 위해 StarGAN은 mask vector 개념을 도입한다. StarGAN은 mask vector의 정보를 통해 연관되어 있지 않은 label을 무시하고, 특정 dataset에서 제공되는 명시적인 label에만 포커싱할 수 있다. mask vector인 m은 n차원의 one-hot vector이며, 여기서 n은 데이터셋 뭉치의 갯수를 의미한다. 이를 이용하여 위와 식과 같은 방법으로 label vector를 정의한다. [.]은 concatenation을 따르며, ci는 i번째 dataset의 label들의 vector를 의미한다.<br>
+위의 문제를 해결하기 위해 StarGAN은 mask vector 개념을 도입한다. StarGAN은 mask vector의 정보를 통해 연관되어 있지 않은 label을 무시하고, 특정 dataset에서 제공되는 명시적인 label에만 포커싱할 수 있다. mask vector인 m은 n차원의 one-hot vector이며, 여기서 n은 데이터셋 뭉치의 갯수를 의미한다. 이를 이용하여 위와 식과 같은 방법으로 label vector를 정의한다. [.]은 concatenation을 따르며, ci는 i번째 dataset의 label vector를 의미한다. 만약 어떤 이미지가 i번째 dataset에 해당한다고 가정하자. ci는 dataset이 binary attribute라면 binary vector로 표현되고, categorical attribute라면 one-hot vector로 표현된다. ci를 제외한 나머지 n-1개의 unknow label들은 단순히 0으로 할당시켜준다. 논문에서는 CelebA와 RaFD dataset을 사용하므로 n은 2가 된다.<br>
 <br>
 
 
