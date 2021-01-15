@@ -146,7 +146,7 @@ while True:
 
 ## 2. Non-Saturating Game
 
-<img src="image/GAN008.PNG" width='100%'>
+<img src="Image/GAN008.PNG" width='100%'>
 
 <img src='Image/GAN009.PNG' width='100%'>
 
