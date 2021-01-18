@@ -113,3 +113,34 @@ Loss Function은 목적에 따라 3가지로 분해할 수 있다.<br>
 ## 10. StarGAN Overview
 
 <img src='Image/StarGAN_008.PNG' width='100%'>
+
+
+
+
+
+# 2. PR-152:StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation
+
+Reference) [[link]](https://www.youtube.com/watch?v=i3-rTEFpyv0)
+
+## 1. CycleGAN vs StarGAN
+
+* CycleGAN에 비하여 StarGAN이 가지고 있는 단점이 있다. StarGAN은 multi-domain dataset을 학습하기 때문에, 모든 dataset의 사이즈를 동일하게 맞춰주어야 한다. 반면에 CycleGAN은 학습하려는 두 domain의 dataset 사이즈만 동일하면 학습이 가능하다.
+
+
+
+## 2. Objective Function
+
+<img src='Image/StarGAN_017.PNG' width='100%'>
+
+* Object Function에서 유념해서 봐야 할 부분이 있다. Domain Classification Loss와 Full Objective를 살펴보면, L(real)은 L(D)에만 사용되고 L(fake)는 L(G)에만 사용되는 것을 확인할 수 있다. 즉, L(real)은 D를 학습할 때에만 사용되고, L(fake)는 G를 학습할 때에만 사용된다. D를 학습하는데에 L(fake)를 사용하지 않는 이유는, 학습 초기에 G(x, c)가 랜덤/노이즈의 이미지를 내놓기 때문에 D의 성능 저하에 영향을 끼칠 수 있기 때문이라고 발표에서 언급한다.
+
+* 논문의 저자는 Reconstruction Loss에 더 많은 가중치(lambda = 10)를 주어서 contents를 보호하는 방향으로 학습하는 것을 중요하게 생각했음을 확인할 수 있다.
+
+
+
+## 3. Limiations
+
+* Use the same size of the images for translation
+  * Hard to extend on different size of the images in different datasets
+* Claimed Multiple datasets but Provide the results on two datasets
+  * Not sure on the scalability of multiple datasets
