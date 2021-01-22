@@ -119,3 +119,46 @@ plt.show()
 ## 11. 립시츠 연속 함수(Lipschitz-Continuous Function)
 
 <img src='Image/BN_011.PNG' width='100%'>
+
+
+
+
+
+# 2. PR-021: Batch Normalization
+
+Reference) [[link]](https://www.youtube.com/watch?v=TDx8iZHwFtM)
+
+## 1. Learing problem in DNN: Internal Covariate Shift
+
+* Training DNN is more difficult
+  * Due to many parameters
+  * Small change in all weights could make vary different value in upper layer
+  * **This variance is called 'Internal Covariate Shift'**
+  * It is similar to the problem where dist. of training and testing are different
+* To address this Internal Covariate Shift problem, previous studies used
+  * careful initialization --> Difficult
+  * small learning rate --> Slow
+* To make training speed fast and easy learning, Batch Norm. is proposed
+* It assume that if the change of dist. is not large, training weight parameter is easy
+* This is done by restricting input range of activation function
+
+
+
+## 2. Advantage of Batch Norm.
+
+* Higher learning rate is possible
+* Less careful initialization
+* Regularization Effect(So, Dropout is not necessary)
+
+
+
+## 3. Other methods
+
+* Exponential Linear Unit(ELU) doesn't need batch norm.
+* Scaled Exponential Linear Unit(SELU) doesn't need batch norm.
+
+
+
+# 3. PR-134 How Does Batch Normalization Help Optimization?
+
+Reference) [[link]](https://www.youtube.com/watch?v=hiN0IMM50FM)
