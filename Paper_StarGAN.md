@@ -19,7 +19,17 @@ StarGAN은 다수의 domain을 가진 task에서 오직 하나의 모델을 사�
 
 <img src="Image/StarGAN_009.PNG" width='100%'>
 
-*`Question) 논문에서 제시된 두 dataset은 각각을 domain이라고 할 수 있는가?`*<br>
+*Question solved) 논문에서 제시된 두 dataset은 각각을 domain이라고 할 수 있는가?*<br>
+
+> 논문의 Introduction에 attribute와 domain에 대한 정의를 언급하고 있다. 이 부분을 통해 domain이란 같은 attribute value를 갖는 이미지들의 집합이라고 할 수 있다. 이 논문의 CelebA dataset을 예로 들자면, hair color라는 attribute 안에 있는 black, blond, brown과 gender라는 attribute 안에 있는 male, female과 age라는 attribute 안에 있는 young, old가 모두 domain이다. 즉 CelebA에서 사용한 domain은 총 7개이다.<br>
+> <br>
+> *We denote the terms attribute as a meaningful feature inherent in an image such as hair color, gender or age, and attribute value as a particular value of an attribute, e.g., black/blond/brown for hair color or male/female for gender. We further denote domain as a set of images sharing the same attribute value. For example, images of women can represent one domain while those of men represent another.*<br>
+> We construct seven domains using the following attributes: hair color (black, blond, brown), gender (male/female), and age (young/old).<br>
+> <br>
+> <br>
+>
+> +만약 attribute가 continuous variable이라면?
+
 *However, existing models are both inefficient and ineffective in such multi-domain image translation tasks. Their inefficiency results from the fact that in order to learn all mappings among k domains, k(k-1) generators have to be trained.*<br>
 기존 모델은 multi-domain-image-to-image translation을 수행함에 있어서 비효율적이다. 위 이미지의 (a)에서 그 이유를 설명한다. 만약 4개의 domain을 가진 task를 수행하고자 한다면, 2개의 domain I2I translation을 담당하는 Generator 모델을 총 12개 만들어야 한다. 즉, k개의 domain이 존재하는 task는 총 k(k-1)개의 Generator가 각각 학습되어야 한다는 것을 의미한다.<br>
 <br>
@@ -76,7 +86,12 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 
 <img src='Image/StarGAN_012.PNG' width='100%'>
 
-*`Question) G를 학습하는 과정에서, 만약 D가 G(x,c)를 fake라고 분류하면 c에 대한 학습을 할 수 없는 것 아닌가?`*<br>
+*Question solved) G를 학습하는 과정에서, 만약 D가 G(x,c)를 fake라고 분류하면 c에 대한 학습을 할 수 없는 것 아닌가?*<br>
+
+> 이는 loss function의 정의에서 힌트를 얻을 수 있다. Domain classification loss를 정의한 부분을 살펴보면, f와 r로 표기한 부분을 볼 수 있다. 이는 각각 fake와 real을 의미한다. 따라서 첫째 식의 의미는 fake image, 즉 G(x, c) 이미지일 때 D가 c라고 판단하는 probability distribution을 의미(즉 이 값은 scalar)한다. 마찬가지로 두번째 식의 의미는 real image, 즉 x 이미지일 때 D가 c'이라고 판단하는 probability를 의미한다. 그런데 가장 중요한 점은 두 term이 Full Objective에서 사용되는 부분을 봐야 한다. L(real)의 경우 D의 loss function에 속해 있고, L(fake)의 경우 G의 loss function에 속해 있다. 즉, fake image의 domain classification loss는 G를 학습하는데에는 사용하지만, D를 학습하는데에는 사용하지 않는다. 이는 학습 초기에 G를 통해 생성한 이미지가 노이즈가 많기 때문에 D의 성능에 방해를 줄 수 있기 때문이라고 추측할 수 있다. 따라서 Appendix에서 제시된 이미지의 왼쪽 부분은 D를 학습하기 때문에 real일 경우에만 domain classification loss를 사용한다. 반면에 이미지의 오른쪽 부분은 G를 학습하기 때문에 D를 통한 domain classification을 수행한다(fake라고 하더라도 c에 대한 학습이 가능하다).<br>
+> <br>
+> *the term Dcls(c'|x) represents a probability distribution over domain labels computed by D*
+
 따라서 위의 두 term을 정의하고 각각 G와 D의 loss function에 추가시킨다. 이를 통해 G는 target domain c로 분류될 수 있는 이미지를 생성하는 방향으로 학습되고, D는 real이라고 판별한 이미지의 original domain c'을 잘 분류할 수 있는 방향으로 학습된다.<br>
 <br>
 
@@ -84,7 +99,10 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 
 <img src='Image/StarGAN_013.PNG' width='100%'>
 
-*`Question) 이 방법이 input image의 컨텐츠를 보존할 수 있다는 것이랑 무슨 관련이 있는지?`*<br>
+*Question solved) 이 방법이 input image의 컨텐츠를 보존할 수 있다는 것이랑 무슨 관련이 있는지?*<br>
+
+> 이는 loss function의 정의에서 힌트를 얻을 수 있다. x와 G(G(x, c), c')의 차이를 줄이는 것은,  두 이미지가 가장 유사한 형태가 되도록 만든다는 것을 의미한다. 따라서 두 이미지가 가장 유사하게 되려면, 중간 절차인 G(x, c)에서 최소로 변해야만 할 것이다. 이러한 규제로 인해 G(x, c)는 domain의 content를 제외한 다른 어떠한 특징도 바꿀 수 없게 된다.
+
 *However, minimizing the losses (Eqs. (1) and (3)) does not guarantee that translated images preserve the content of its input images while changing only the domain-related part of the inputs. To alleviate this problem, we apply a cycle consistency loss [9, 33] to the generator,*<br>
 위의 두 loss function만으로는 translated image가 input image의 컨텐츠를 보존한다는 것을 보장하지 않는다는 지적을 한다. 이에 따라 G에 cycle consistency loss를 적용하여 문제를 해결한다. 위의 식에서 G(x, c)는 original domain c'에서 target domain c로 변환하는 term이다. G(G(x, c), c')은 변환된 target domain c에서 다시 original domain c'으로 변환하는 term이다. 즉, 기존의 이미지 x와 변환을 두 번 반복한 이미지 G(G(x, c), c')의 L1을 loss function으로 설정함으로써, input image의 컨텐츠를 보존할 수 있다.<br>
 <br>
@@ -100,7 +118,11 @@ StarGAN의 학습 목표는 x로부터 target domain c에 적합한 y를 생성�
 *An issue when learning from multiple datasets, however, is that the label information is only partially known to each dataset.*<br>
 multiple dataset을 학습할 때의 문제는 label 정보가 dataset마다 다르기 때문에 '부분적으로' 존재한다. 이는 translated image G(x, c)로부터 input image x로 reconstruction하려면 label vector c'에 완전한 정보가 있어야 하기 때문에 문제가 된다.<br>
 
-*Question solved - have to check) 이를 이해하려면 '학습'의 측면에서 생각해보는 것이 좋다. translated image에서 reconstruction한 image G(G(x, c), c')를 만든다고 해보자. 이 때 reconstruction하기 위해서는 c'에 대한 정보가 있어야 가능하다. 그런데 학습 데이터는 각 domain별로 각자의 label이 존재한다. 따라서 데이터의 종류를 파악하여 해당 데이터의 label로만 c'을 구성하기 위해 mask vector가 필요하다. 참고로 이렇게 reconstruction을 하는 이유는 reconstruction loss를 구하기 위함이다.*<br><br>
+*Question solved) mask vector의 의미?*<br>
+
+> 이를 이해하려면 '학습'의 측면에서 생각해보는 것이 좋다. translated image에서 reconstruction한 image G(G(x, c), c')를 만든다고 해보자. 이 때 reconstruction하기 위해서는 c'에 대한 정보가 있어야 가능하다. 그런데 학습 데이터는 각 domain별로 각자의 label이 존재한다. 따라서 데이터의 종류를 파악하여 해당 데이터의 label로만 c'을 구성하기 위해 mask vector가 필요하다. 참고로 이렇게 reconstruction을 하는 이유는 reconstruction loss를 구하기 위함이다.
+
+<br>
 
 ### Mask Vector
 
@@ -126,6 +148,10 @@ multiple dataset을 학습할 때의 문제는 label 정보가 dataset마다 다
 
 *We perform one generator update after five discriminator updates as in [4].*<br>
 GAN을 다루었을때의 내용처럼 1 epoch당 (D 학습 여러 번 + G 학습 1번) 으로 실험을 구성한 것을 확인할 수 있다.<br>
+<br>
+
+*This is because unlike the other methods, StarGAN can handle image translation involving multiple attribute changes by randomly generating a target domain label in the training phase.*<br>
+StarGAN이 다른 모델들과는 달리 multi attribute change에서 높은 성능을 보인 이유를 설명한다. 이는 학습하는 과정에서 target domain을 랜덤하게 생성했기 때문이라고 언급한다.<br>
 <br>
 
 (...skip...)
