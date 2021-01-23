@@ -43,11 +43,10 @@ StarGAN은 다수의 domain을 가진 task에서 오직 하나의 모델을 사�
 <br>
 
 *The idea is simple. Instead of learning a fixed translation (e.g., black-to-blond hair), our generator takes in as inputs both image and domain information, and learns to flexibly translate the image into the corresponding domain. We use a label (e.g., binary or one-hot vector) to represent domain information. During training, we randomly generate a target domain label and train the model to flexibly translate an input image into the target domain. By doing so, we can control the domain label and translate the image into any desired domain at testing phase.*<br>
-<br>
 StarGAN은 이미지와 domain 정보를 모두 input으로 받고, 유연하게 이미지를 변환하는 방법을 학습한다. 특히 어떤 domain인지에 대한 정보를 남기기 위해 label(binary or one-hot vector)을 사용한다.  훈련 중에는, 랜덤하게 target domain label을 생성하여 모델이 이에 대응하는 이미지로 유연하게 tranlation할 수 있도록 학습한다. 이러한 학습을 거치면 원하는 domain에 대한 이미지를 생성할 수 있게 된다.<br>
 <br>
 
-*We also introduce a simple but effective approach that enables joint training between domains of different datasets by adding a mask vector to the domain label. Our proposed method ensures that the model can ignore unknown labels and focus on the label provided by a particular dataset.*<br>*Quesetion) 정확한 의미?*<br>
+*We also introduce a simple but effective approach that enables joint training between domains of different datasets by adding a mask vector to the domain label. Our proposed method ensures that the model can ignore unknown labels and focus on the label provided by a particular dataset.*<br>
 또한 StarGAN에서 사용하는 다른 접근을 하나 소개한다. domain label에 'mask vector'를 추가함으로써 다른 데이터의 domain을 연결시켜준다. 이는 모델이 특정 domain의 task만을 수행할 수 있도록 초점을 맞춰 준다.
 
 ## Summary
